@@ -1,40 +1,72 @@
 import { useEffect, useState } from 'react';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+
 const MyProjects = () => {
     const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         fetch('https://protfolio-of-nirob-ahmed-server.vercel.app/projects')
             .then(res => res.json())
             .then(data => {
                 setProjects(data);
-                console.log(data);
+                setLoading(false);
             })
+            .catch(() => setLoading(false));
     }, []);
-    return (
-        <div id='projects'  data-aos="fade-up" data-aos-duration="3000" className="pb-10">
-            <h1 className="font-bold text-xl lg:text-3xl py-4 text-[#12F7FF]">My Projects</h1>
-            <div className="grid gap-4 grid-cols-1 my-5 md:grid-cols-2 lg:grid-cols-2">
-                {
-                    projects.map(project =>
-                        <div data-aos="fade-up" data-aos-duration="2000" className="w-full max-w-sm p-4 md:max-w-md lg:max-w-lg bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200">
-                            <div className='w-full h-64'>
-                                <img src={project.WebsiteImage} alt='' className="w-full h-full object-cover" />
 
-                            </div>
-                            <div className="p-5">
-                                <h2 className="text-xl font-bold text-gray-800 mb-2">{project.WebsiteName}</h2>
-                                <p className="text-gray-600 mb-4">{project.WebsiteDes.slice(0,50)}...</p>
-                                <div className="flex justify-between items-center">
-                                    <Link to={`/details/${project._id}`}
-                                        className="flex w-full justify-center items-center gap-2 border rounded-none text-black border-black  px-4 py-2 font-semibold bg-[#1F7FF] hover:scale-95 transition">
-                                        View Details <FaExternalLinkAlt />
-                                    </Link>
-                                </div>
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-96">
+                <div className="w-12 h-12 border-4 border-dashed rounded-full animate-spin border-[#12F7FF]"></div>
+            </div>
+        );
+    }
+
+    return (
+        <div id="projects" data-aos="fade-up" data-aos-duration="3000" className="pb-16 px-4 lg:px-12">
+            <h1 className="text-left font-bold text-2xl md:text-4xl py-6 text-[#12F7FF]">
+                My Projects
+            </h1>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+                {projects.map((project) => (
+                    <div
+                        key={project._id}
+                        data-aos="fade-up"
+                        data-aos-duration="2000"
+                        className="flex flex-col bg-white rounded shadow-lg hover:shadow-2xl transition-transform duration-300 hover:scale-[1.02] overflow-hidden border border-gray-200"
+                    >
+                        {/* Image */}
+                        <div className="relative w-full h-56 sm:h-64 md:h-72">
+                            <img
+                                src={project.WebsiteImage}
+                                alt={project.WebsiteName}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex flex-col flex-1 p-5">
+                            <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-2 line-clamp-1">
+                                {project.WebsiteName}
+                            </h2>
+                            <p className="text-gray-600 mb-4 text-sm md:text-base line-clamp-2">
+                                {project.WebsiteDes}
+                            </p>
+
+                            <div className="mt-auto">
+                                <Link
+                                    to={`/details/${project._id}`}
+                                    className="w-full flex justify-center items-center gap-2 rounded-none text-black border-[1px] border-black font-semibold px-4 py-2 bg-gradient-to-r from-[#12F7FF] to-[#1F7FF] hover:opacity-90 transition"
+                                >
+                                    View Details <FaExternalLinkAlt />
+                                </Link>
                             </div>
                         </div>
-                    )
-                }
+                    </div>
+                ))}
             </div>
         </div>
     );
